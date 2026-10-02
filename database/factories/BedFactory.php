@@ -2,25 +2,19 @@
 
 namespace Database\Factories;
 
+use App\Models\Bed;
+use App\Models\Ward;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\DB;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Bed>
- */
+/** @extends Factory<Bed> */
 class BedFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $wardId = DB::table('wards')->inRandomOrder()->value('id');
         return [
-            'ward_id' => $wardId
-            
+            'ward_id' => fn () => Ward::query()->inRandomOrder()->value('id') ?? Ward::factory()->create()->id,
+            'patient_id' => null,
+            'occupied' => false,
         ];
     }
 }

@@ -1,47 +1,35 @@
-
 @extends('layouts.layout')
 
+@section('title', 'Beds')
+
 @section('content')
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-<a href ="/beds/create" class="btn btn-primary mt-3 wow zoomIn">Add new Bed</a>
-@if($beds->count() > 0)
-<table>
-    <thead>
-        <tr>
-            <th>Bed id</th>
-            <th>Ward</th>
-            <th>Patient first Name</th>
-            <th>Patient last Name</th>
-            <th>Patient Email</th>
-        </tr>
-    </thead>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="mb-0">Beds</h1>
+  <a href="/beds/create" class="btn btn-primary">Add bed</a>
+</div>
+
+@if ($beds->count())
+  <table class="table table-striped table-sm">
+    <thead><tr><th>Bed</th><th>Ward</th><th>Status</th><th>Patient</th></tr></thead>
     <tbody>
-        @foreach ($beds as $bed)
-            <tr>
-                <td><a href="/beds/{{ $bed->id }}">{{ $bed->id }}</td>
-                <td>{{ optional($bed->ward)->name }}</td>
-                <td>{{ optional($bed->patient)->first_name }}</td>
-                <td>{{ optional($bed->patient)->last_name }}</td>
-                <td>{{ optional($bed->patient)->email }}</td>
-            </tr>
-        @endforeach
+      @foreach ($beds as $bed)
+        <tr>
+          <td><a href="/beds/{{ $bed->id }}">{{ $bed->id }}</a></td>
+          <td>{{ optional($bed->ward)->name }}</td>
+          <td>
+            <span class="badge {{ $bed->occupied ? 'badge-warning' : 'badge-success' }}">{{ $bed->occupied ? 'Occupied' : 'Free' }}</span>
+          </td>
+          <td>
+            @if ($bed->patient)
+              <a href="/patients/{{ $bed->patient->id }}">{{ $bed->patient->full_name }}</a>
+            @endif
+          </td>
+        </tr>
+      @endforeach
     </tbody>
-</table>
+  </table>
 @else
-    <p>No data available</p>
+  <p class="text-muted">No beds yet.</p>
 @endif
-
-
-<a href="/assign/assign-bed-to-patient" class="btn btn-primary mt-3 wow zoomIn">assign patient to bed</a>
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
-
+<a href="/assign/assign-bed-to-patient" class="btn btn-outline-primary btn-sm">Move patient to a bed</a>
 @endsection

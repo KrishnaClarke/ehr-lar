@@ -2,36 +2,21 @@
 
 namespace Database\Factories;
 
-use App\Models\Doctor;
 use App\Models\Hospital;
+use App\Models\Doctor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Doctor>
- */
+/** @extends Factory<Doctor> */
 class DoctorFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Doctor::class;
-
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $hospitalId = Hospital::pluck('id')->first();
         return [
-            'hospital_id' => $hospitalId,
-            'first_name' => $this->faker->firstName($gender = 'male'|'female'),
-            'last_name'=>$this->faker->lastName(),
-            'date_of_birth' => $this->faker->date("Y-m-d"),
-            'email' => $this->faker->unique()->safeEmail(),
+            'hospital_id' => fn () => Hospital::query()->value('id') ?? Hospital::factory()->create()->id,
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'date_of_birth' => fake()->dateTimeBetween('-65 years', '-21 years')->format('Y-m-d'),
+            'email' => fake()->unique()->safeEmail(),
         ];
     }
 }

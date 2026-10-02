@@ -1,42 +1,23 @@
-
-
 @extends('layouts.layout')
 
-@section('content')
+@section('title', 'Free a bed')
 
-<h1>Remove Patient from Bed</h1>
+@section('content')
+<h1>Free a bed</h1>
+<p class="text-muted">The patient stays admitted but no longer has a bed.</p>
 
 <form action="{{ route('update-bed-submit') }}" method="POST">
-    @csrf
-
-    <div>
-        <label for="bed_id">Bed ID:</label>
-        <select name="bed_id" id="bed_id">
-            @foreach($beds as $bed)
-                <option value="{{ $bed->id }}">{{ $bed->id }}</option>
-            @endforeach
-        </select>
-    </div>
-
-    <div>
-        <label for="patient_id">Patient ID:</label>
-        <select name="patient_id" id="patient_id">
-            @foreach($patients as $patient)
-                <option value="{{ $patient->id }}">
-                    {{ $patient->id }}: {{ $patient->first_name }} {{ $patient->last_name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div>
-        <label for="occupied">Occupied:</label>
-        <input type="text" name="occupied" id="occupied">
-    </div>
-
-    <button type="submit">Remove Patient from Bed</button>
+  @csrf
+  <div class="form-group">
+    <label for="bed_id">Occupied bed</label>
+    <select name="bed_id" id="bed_id" class="form-control" required>
+      @forelse ($beds as $bed)
+        <option value="{{ $bed->id }}">{{ $bed->ward->name }} &middot; bed {{ $bed->id }} &ndash; {{ optional($bed->patient)->full_name }}</option>
+      @empty
+        <option value="" disabled selected>No occupied beds</option>
+      @endforelse
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Free bed</button>
 </form>
-
 @endsection
-
-

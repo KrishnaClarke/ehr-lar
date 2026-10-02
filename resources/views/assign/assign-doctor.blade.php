@@ -1,44 +1,37 @@
-
-
 @extends('layouts.layout')
 
-@section('content')
+@section('title', 'Assign doctor')
 
-<h1>Assign Doctor to Patient</h1>
+@section('content')
+<h1>Assign a doctor to a patient</h1>
 
 <form action="{{ route('assign-doctor-submit') }}" method="POST">
-   @csrf
-        <label for="doctor_id">Select Doctor:</label>
-        <select name="doctor_id" id="doctor_id">
-            @foreach ($doctors as $doctor)
-                <option value="{{ $doctor->id }}">{{ $doctor->id }}: {{ $doctor->first_name }} {{ $doctor->last_name }}</option>
-            @endforeach
-        </select>
-        <br><br>
-        <label for="patient_id">Select Patient:</label>
-        <select name="patient_id" id="patient_id">
-            @foreach ($patients as $patient)
-                <option value="{{ $patient->id }}">{{ $patient->id }}: {{ $patient->first_name }} {{ $patient->last_name }}</option>
-            @endforeach
-        </select>
-        <br><br>
-        <div>
-                <label for="active">Active:</label>
-                <input type="text" name="active" id="active" >
-        </div>
-        <div class="col-12 py-2 wow fadeInUp" data-wow-delay="300ms">
-            <label for="disease">Disease:</label>
-            <input type="text" name="disease" id="disease">
-            <br><br>
-        </div>
-
-        <div class="col-12 py-2 wow fadeInUp" data-wow-delay="300ms">
-            <label for="date_assigned">Date Assigned:</label>
-            <input type="date" name="date_assigned" id="date_assigned" placeholder="yyyy-mm-dd" required>
-            <br><br>
-        </div>
-        <button type="submit"> Doctor to Patient</button>
-    </form>
-
-
+  @csrf
+  <div class="form-group">
+    <label for="doctor_id">Doctor</label>
+    <select name="doctor_id" id="doctor_id" class="form-control" required>
+      @foreach ($doctors as $doctor)
+        <option value="{{ $doctor->id }}" @selected((int) old('doctor_id') === $doctor->id)>Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}</option>
+      @endforeach
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="patient_id">Patient (admitted only)</label>
+    <select name="patient_id" id="patient_id" class="form-control" required>
+      @foreach ($patients as $patient)
+        <option value="{{ $patient->id }}" @selected((int) old('patient_id') === $patient->id)>{{ $patient->last_name }}, {{ $patient->first_name }}</option>
+      @endforeach
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="disease">Condition</label>
+    <input type="text" name="disease" id="disease" class="form-control" value="{{ old('disease') }}" required>
+  </div>
+  <div class="form-group">
+    <label for="date_assigned">Date assigned</label>
+    <input type="date" name="date_assigned" id="date_assigned" class="form-control" value="{{ old('date_assigned', now()->toDateString()) }}" required>
+  </div>
+  <input type="hidden" name="active" value="1">
+  <button type="submit" class="btn btn-primary">Assign doctor</button>
+</form>
 @endsection

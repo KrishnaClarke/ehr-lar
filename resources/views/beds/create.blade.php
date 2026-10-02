@@ -1,30 +1,21 @@
 @extends('layouts.layout')
 
+@section('title', 'Add bed')
+
 @section('content')
+<h1>Add a bed</h1>
 
-<div >
-  <h1>Create a New Bed</h1>
-  <form class="main-form" action="/beds" method="POST">
+<form action="/beds" method="POST" class="main-form">
   @csrf
-        
-         
-  <div>
-        <label for="ward_id">Ward:</label>
-        <select name="ward_id" id="ward_id">
-            @foreach($wards as $ward)
-                <option value="{{ $ward->id }}">{{ $ward->id }}: {{ $ward->name }}</option>
-            @endforeach
-        </select>
-    </div>
-
-
-
-
-        
-    <input type="submit" value="add new bed" >
-  </form>
-
-
-  <a href="/beds"  class="btn btn-primary mt-3 wow zoomIn"><- Back to all beds </a>
-
+  <div class="form-group mt-4">
+    <label for="ward_id">Ward</label>
+    <select name="ward_id" id="ward_id" class="form-control" required>
+      @foreach ($wards as $ward)
+        <option value="{{ $ward->id }}" @selected((int) old('ward_id') === $ward->id)>{{ $ward->name }}</option>
+      @endforeach
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Add bed</button>
+  <a href="/beds" class="btn btn-outline-secondary">Cancel</a>
+</form>
 @endsection

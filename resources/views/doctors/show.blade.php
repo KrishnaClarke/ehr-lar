@@ -1,25 +1,36 @@
 @extends('layouts.layout')
 
+@section('title', 'Dr. '.$doctor->last_name)
+
 @section('content')
-    <div>
-                <h1>Doctor's Name - {{ $doctor->first_name }} {{ $doctor->last_name }}</h1>
-                    <p class="text-xl mb-0">Date of Birth - {{ $doctor->date_of_birth }}</p>
-                    <p class="text-xl mb-0">Email - {{ $doctor->email }}</p>
+<a href="/doctors" class="btn btn-sm btn-outline-secondary mb-3">&larr; All doctors</a>
 
-                    <h2>Assigned Patients:</h2>
-                    <ul>
-                        @foreach ($patients as $patient)
-                            <li>{{ $patient->id }}: {{ $patient->first_name }} {{ $patient->last_name }}</li>
-                        @endforeach
-                    </ul>
+<div class="d-flex justify-content-between align-items-start">
+  <div>
+    <h1>Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}</h1>
+    <p class="mb-1">Date of birth: {{ $doctor->date_of_birth }}</p>
+    <p>Email: {{ $doctor->email }}</p>
+  </div>
+  <a href="/doctors/{{ $doctor->id }}/edit" class="btn btn-sm btn-outline-primary">Edit details</a>
+</div>
 
-                    <form action="/doctors/{{ $doctor->id }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button>Retired/Dismissal Doctor</button>
-                    </form>
-    </div>
+<h3 class="mt-4">Patients</h3>
+@forelse ($patients as $patient)
+  @if ($loop->first)<ul>@endif
+  <li>
+    <a href="/patients/{{ $patient->id }}">{{ $patient->first_name }} {{ $patient->last_name }}</a>
+    &ndash; {{ $patient->pivot->disease }}
+    <span class="text-muted">({{ $patient->pivot->date_assigned }}{{ $patient->pivot->active ? ', active' : ' to '.$patient->pivot->date_unassigned }})</span>
+  </li>
+  @if ($loop->last)</ul>@endif
+@empty
+  <p class="text-muted">No patients assigned.</p>
+@endforelse
 
-    <a href="/doctors" class="btn btn-primary mt-3 wow zoomIn"><- Back to all Doctors </a>
-    <a href="/beds/{bed}" class="btn btn-primary mt-3 wow zoomIn">Update Doctor</a>
+<form action="/doctors/{{ $doctor->id }}" method="POST" class="mt-4"
+      onsubmit="return confirm('Delete this doctor?')">
+  @csrf
+  @method('DELETE')
+  <button class="btn btn-outline-danger btn-sm">Delete doctor</button>
+</form>
 @endsection

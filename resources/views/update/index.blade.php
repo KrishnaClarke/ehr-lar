@@ -1,21 +1,11 @@
-
 @extends('layouts.layout')
 
+@section('title', 'Unassign')
+
 @section('content')
-
-<h1>Update</h1>
-
-<a href="/update/update-nurse" class="btn btn-primary mt-3 wow zoomIn">update nurse to patient</a>
-<a href="/update/update-doc" class="btn btn-primary mt-3 wow zoomIn">update patient to doctor</a>
-
-<a href="/update/update-bed" class="btn btn-primary mt-3 wow zoomIn">update patient to bed</a>
-
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
-
-
+<h1>Unassign</h1>
+<p class="text-muted">End a care assignment or free a bed. History is kept.</p>
+<a href="/update/update-doc" class="btn btn-outline-primary mb-2">Unassign a doctor from a patient</a>
+<a href="/update/update-nurse" class="btn btn-outline-primary mb-2">Unassign a nurse from a patient</a>
+<a href="/update/update-bed" class="btn btn-outline-primary mb-2">Free a bed</a>
 @endsection

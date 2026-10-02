@@ -1,32 +1,24 @@
 @extends('layouts.layout')
 
+@section('title', 'Bed '.$bed->id)
+
 @section('content')
+<a href="/beds" class="btn btn-sm btn-outline-secondary mb-3">&larr; All beds</a>
 
+<h1>Bed {{ $bed->id }}</h1>
+<p class="mb-1">Ward: {{ optional($bed->ward)->name }}</p>
+<p>Status: <span class="badge {{ $bed->occupied ? 'badge-warning' : 'badge-success' }}">{{ $bed->occupied ? 'Occupied' : 'Free' }}</span></p>
 
-    <div > 
-        <h1>Bed id - {{$bed->id}}</h1>
-        <p class="text-xl mb-0">Ward id - {{$bed->ward_id}}</p>
-        <p class="text-xl mb-0">Occupied - {{$bed->occupied}}</p>
+<h3 class="mt-4">Patient</h3>
+@if ($patient)
+  <p><a href="/patients/{{ $patient->id }}">{{ $patient->full_name }}</a></p>
+@else
+  <p class="text-muted">No patient in this bed.</p>
+@endif
 
-        <h2>Assigned Patient:</h2>
-        @if ($patient)
-            <p>{{ $patient->id }}</p>
-            <p>{{ $patient->first_name }}</p>
-            <p>{{ $patient->last_name }}</p>
-        @else
-            <p>No patient assigned.</p>
-        @endif
-
-        <form action="/beds/{{$bed->id}}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button>Throw away bed</button>
-        </form>
-                                    </div>
-                              
-                                  <a href="/beds" class="btn btn-primary mt-3 wow zoomIn"><- Back to all Beds </a>
-                                  <a href="/beds/update" class="btn btn-primary mt-3 wow zoomIn">Update bed</a>
-                            </div>
-
-
+<form action="/beds/{{ $bed->id }}" method="POST" class="mt-4" onsubmit="return confirm('Remove this bed?')">
+  @csrf
+  @method('DELETE')
+  <button class="btn btn-outline-danger btn-sm">Remove bed</button>
+</form>
 @endsection

@@ -1,38 +1,32 @@
 @extends('layouts.layout')
 
+@section('title', 'Admit patient')
+
 @section('content')
-<div>
-  <h1>Create a New Patient</h1>
-  <form  class="main-form" action="/patients" method="POST">
+<h1>Admit a new patient</h1>
+<p class="text-muted">The patient is placed in the first available bed.</p>
 
+<form action="/patients" method="POST" class="main-form">
   @csrf
-
-
-  <div class="row mt-5 ">
-        <div class="col-12 col-sm-6 py-2 wow fadeInLeft">
-          <label for="first_name">Patient first name:</label>
-          <input type="text" class="form-control" name="first_name" id="first_name" required>
-        </div>
-        <div class="col-12 col-sm-6 py-2 wow fadeInRight">
-          <label for="last_name">Patient last name:</label>
-          <input type="text"  class="form-control" name="last_name" id="last_name" required>
-        </div>
-        <div class="col-12 py-2 wow fadeInUp" data-wow-delay="300ms">
-          <label for="date_of_birth">Patient Date of Birth:</label>
-          <input type="text"  class="form-control" name="date_of_birth" id="date_of_birth" placeholder="yyyy-mm-dd" required>
-        </div>
-        <div class="col-12 py-2 wow fadeInUp" data-wow-delay="300ms">
-          <label for="email">Patient email:</label>
-          <input type="text"  class="form-control" name="email" id="email" required>
-        </div>
-       
+  <div class="row mt-4">
+    <div class="col-12 col-sm-6 py-2">
+      <label for="first_name">First name</label>
+      <input type="text" class="form-control" name="first_name" id="first_name" value="{{ old('first_name') }}" required>
     </div>
-   
-    <input type="submit" value="add new patient">
-  </form>
-
-
-  
-  <a href="/patients" class="btn btn-primary mt-3 wow zoomIn"><- Back to all Patient </a>
-
+    <div class="col-12 col-sm-6 py-2">
+      <label for="last_name">Last name</label>
+      <input type="text" class="form-control" name="last_name" id="last_name" value="{{ old('last_name') }}" required>
+    </div>
+    <div class="col-12 col-sm-6 py-2">
+      <label for="date_of_birth">Date of birth</label>
+      <input type="date" class="form-control" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth') }}" max="{{ now()->subDay()->toDateString() }}" required>
+    </div>
+    <div class="col-12 col-sm-6 py-2">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" name="email" id="email" value="{{ old('email') }}" required>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Admit patient</button>
+  <a href="/patients" class="btn btn-outline-secondary mt-3">Cancel</a>
+</form>
 @endsection
