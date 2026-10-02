@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+
 class PatientRecord extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['hospital_id', 'patient_id', 'bed_id', 'date_of_admission', 'date_of_release'];
 
     public function hospital(): BelongsTo
     {
@@ -20,7 +19,7 @@ class PatientRecord extends Model
 
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(Patient::class)->withDefault();
+        return $this->belongsTo(Patient::class);
     }
 
     public function bed(): BelongsTo

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreDoctorRequest extends FormRequest
+class UpdateDoctorRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,8 +17,7 @@ class StoreDoctorRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
-            'date_of_birth' => ['required', 'date', 'before:-21 years'],
-            'email' => ['required', 'email', 'max:255', 'unique:doctors,email'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('doctors', 'email')->ignore($this->route('doctor'))],
         ];
     }
 }

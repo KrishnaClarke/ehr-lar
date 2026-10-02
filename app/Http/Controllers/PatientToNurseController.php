@@ -2,49 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Nurse;
-use App\Models\NursePatient;
 use App\Models\Patient;
+use App\Services\PatientFlow;
 use Illuminate\Http\Request;
 
+/** Ends a nurse's assignment to a patient. */
 class PatientToNurseController extends Controller
 {
-    //
-    public function show(){
-        $patients = Patient::all(); // Fetch all patients from your data source
-        $nurses = Nurse::all(); // Fetch all nurses from your data source
-    
-        return view('update.update-nurse', compact('patients', 'nurses'));
+    public function __construct(private PatientFlow $flow)
+    {
     }
+
+    public function show()
+    {
+        return view('update.update-nurse', [
+            'patients' => Patient::admitted()->orderBy('last_name')->get(),
+            'nurses' => Nurse::orderBy('last_name')->get(),
+        ]);
+    }
+
     public function update(Request $request)
     {
-        
-            // Retrieve the form data
-            $patientId = $request->input('patient_id');
-            $nurseId = $request->input('nurse_id');
-            $active = $request->has('active');
-            $dateUnassigned = $request->input('date_unassigned');
-    
-            // Perform the update logic here
-            $nursePatient = NursePatient::where('patient_id', $patientId)->where('nurse_id', $nurseId)->first();
-            if ($nursePatient) {
-                $nursePatient->active = $active;
-                $nursePatient->date_unassigned = $dateUnassigned;
-                $nursePatient->save();
-            }
-    
-            // Redirect to a success page or do something else
-                return redirect('/patients')->with('success', 'Successfully unassigned patient from nurse.');
-        // Retrieve the form data
-       // $patientId = $request->input('patient_id');
-        //$nurseId = $request->input('nurse_id');
-        //$active = $request->has('active');
-        //$dateUnassigned = $request->input('date_unassigned');
+        $data = $request->validate([
+            'patient_id' => ['required', 'exists:patients,id'],
+            'nurse_id' => ['required', 'exists:nurses,id'],
+            'date_unassigned' => ['nullable', 'date'],
+        ]);
 
-        // Perform the update logic here
+        $this->flow->endNurseAssignment(
+            Nurse::findOrFail($data['nurse_id']),
+            Patient::findOrFail($data['patient_id']),
+            $data['date_unassigned'] ?? null,
+        );
 
-        // Redirect to a success page or do something else
-       // return redirect()->route('/patients');
+        return redirect("/patients/{$data['patient_id']}")->with('success', 'Nurse unassigned from patient.');
     }
 }

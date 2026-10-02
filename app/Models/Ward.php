@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Ward extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['hospital_id', 'name'];
 
     public function hospital(): BelongsTo
     {
@@ -23,36 +24,9 @@ class Ward extends Model
         return $this->hasMany(Bed::class);
     }
 
-    /**
-     * All the patients in this ward
-     * @return void
-     */
-    public function patients(): HasMany
+    /** Patients currently occupying a bed in this ward. */
+    public function patients(): HasManyThrough
     {
-        //
-        return $this->hasMany(Patient::class);
+        return $this->hasManyThrough(Patient::class, Bed::class, 'ward_id', 'id', 'id', 'patient_id');
     }
-
-    /**
-     * All the doctors who care for patients in this ward
-     * @return void
-     */
-    public function doctors(): BelongsToMany
-    {
-        //
-        return $this->belongsToMany(Doctor::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * All the nurses who care for patients in this ward
-     * @return void
-     */
-    public function nurses(): BelongsToMany
-    {
-        //
-        return $this->belongsToMany(Nurse::class)
-            ->withTimestamps();
-    }
-    
 }

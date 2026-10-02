@@ -2,44 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Bed;
-use App\Models\Patient;
+use App\Services\PatientFlow;
+use Illuminate\Http\Request;
 
+/** Frees an occupied bed without discharging the patient. */
 class RemovePatientFromBedController extends Controller
 {
-    //
-    public function show(){
-       $patients = Patient::all(); // Fetch all patients from your data source
-       $beds = Bed::all(); // Fetch all beds from your data source
-    
-       return view('update.update-bed', compact('patients', 'beds'));
+    public function __construct(private PatientFlow $flow)
+    {
     }
-     
+
+    public function show()
+    {
+        return view('update.update-bed', [
+            'beds' => Bed::with(['ward', 'patient'])->where('occupied', true)->orderBy('ward_id')->orderBy('id')->get(),
+        ]);
+    }
+
     public function remove(Request $request)
     {
+        $data = $request->validate(['bed_id' => ['required', 'exists:beds,id']]);
 
-        
-            // Retrieve the form data
-            $bedId = $request->input('bed_id');
-            $patientId = $request->input('patient_id');
-            $occupied = $request->has('occupied');
+        $this->flow->releaseBed(Bed::findOrFail($data['bed_id']));
 
-            // Perform the remove logic here
-            $bed = Bed::where('id', $bedId)->first();
-            if ($bed) {
-                $bed->patient_id = $patientId;
-                $bed->occupied = $occupied;
-                $bed->save();
-            }
-        // Retrieve the form data
-       // $bedId = $request->input('bed_id');
-        //$patientId = $request->input('patient_id');
-
-        // Perform the remove logic here
-
-        // Redirect to a success page or do something else
-        return redirect('/patients')->with('success', 'Successfully unassigned patient from bed.');
+        return redirect('/beds')->with('success', 'Patient removed from bed.');
     }
 }

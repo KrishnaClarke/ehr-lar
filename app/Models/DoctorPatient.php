@@ -8,5 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class DoctorPatient extends Model
 {
     use HasFactory;
+
     protected $table = 'doctor_patient';
+
+    protected $fillable = ['doctor_id', 'patient_id', 'active', 'disease', 'date_assigned', 'date_unassigned'];
+
+    protected $casts = ['active' => 'boolean'];
 }
